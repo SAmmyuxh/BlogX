@@ -9,10 +9,7 @@ const PORT = process.env.PORT || 8080;
 
 connectDB()
 
-app.use(cors({
-  origin: 'https://blog-x-yrfk.vercel.app', // your frontend domain
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-}));
+app.use(cors());
 app.use(e.json());
 
 // Routes
