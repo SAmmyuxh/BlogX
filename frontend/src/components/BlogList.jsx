@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import blogService from '../services/blogService';
 import { TagIcon, CalendarDaysIcon, UserCircleIcon, MagnifyingGlassIcon, XCircleIcon, LockClosedIcon, ArrowRightIcon } from '@heroicons/react/24/outline';
-import { useAuth } from '../Context/AuthContext'; // Fixed import
+import { useAuth } from '../Context/AuthContext';
 
 const BlogList = ({ initialSelectedTag = '' }) => {
   const [blogs, setBlogs] = useState([]);
@@ -11,7 +11,7 @@ const BlogList = ({ initialSelectedTag = '' }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [showLoginModal, setShowLoginModal] = useState(false);
-  const { isAuthenticated } = useAuth(); // Get authentication status from context
+  const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -33,8 +33,13 @@ const BlogList = ({ initialSelectedTag = '' }) => {
         blogService.getPublishedBlogs(),
         blogService.getAllTags(),
       ]);
-      setBlogs(blogsData);
-      setTags(tagsData);
+      
+      // Ensure blogs is always an array
+      setBlogs(Array.isArray(blogsData) ? blogsData : []);
+      
+      // Ensure tags is always an array
+      setTags(Array.isArray(tagsData) ? tagsData : []);
+      
       setError('');
     } catch (err) {
       setError('Failed to load initial blog data. Please try again later.');
@@ -48,7 +53,10 @@ const BlogList = ({ initialSelectedTag = '' }) => {
     try {
       setLoading(true);
       const data = await blogService.getPublishedBlogs();
-      setBlogs(data);
+      
+      // Ensure blogs is always an array
+      setBlogs(Array.isArray(data) ? data : []);
+      
       setError('');
     } catch (err) {
       setError('Failed to load blogs');
@@ -62,7 +70,10 @@ const BlogList = ({ initialSelectedTag = '' }) => {
     try {
       setLoading(true);
       const data = await blogService.getBlogsByTag(tag);
-      setBlogs(data);
+      
+      // Ensure blogs is always an array
+      setBlogs(Array.isArray(data) ? data : []);
+      
       setError('');
     } catch (err) {
       setError(`Failed to load blogs for tag: "${tag}"`);
@@ -260,14 +271,16 @@ const BlogList = ({ initialSelectedTag = '' }) => {
                     </div>
                     
                     <p className="text-gray-600 mb-4 leading-relaxed line-clamp-3">
-                      {blog.content.substring(0, 200)}
-                      {blog.content.length > 200 ? '...' : ''}
+                      {blog.content && typeof blog.content === 'string' 
+                        ? (blog.content.substring(0, 200) + (blog.content.length > 200 ? '...' : ''))
+                        : 'No content preview available'}
                     </p>
                   </div>
                   
-                  {blog.tags && blog.tags.length > 0 && (
+                  {/* Fixed tags section - proper type checking */}
+                  {blog.tags && Array.isArray(blog.tags) && blog.tags.length > 0 && (
                     <div className="mb-5">
-                      {blog.tags.slice(0, 3).map((tag, index) => ( // Show max 3 tags for tidiness
+                      {blog.tags.slice(0, 3).map((tag, index) => (
                         <span 
                           key={index}
                           className="inline-block bg-indigo-100 text-indigo-700 text-xs font-medium mr-2 px-2.5 py-1 rounded-full"
