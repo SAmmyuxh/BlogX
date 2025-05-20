@@ -1,6 +1,7 @@
 <p align="center">
   <a href="https://blog-x-yrfk.vercel.app/" target="_blank">
-    <img src="[https://via.placeholder.com/600x250/1a202c/718096.png?text=BlogX](https://icons8.com/icon/61245/blog)" alt="BlogX Banner" width="600" />
+    <img src="[https://via.placeholder.com/600x250/1a202c/718096.png?text=BlogX](![image](https://github.com/user-attachments/assets/86f52c0c-c302-4386-8c0c-a68cf2e454dc)
+)" alt="BlogX Banner" width="600" />
     <!-- Replace with a real, attractive banner/logo if you have one! 
          You can use services like Canva to create one. -->
   </a>
