@@ -1,10 +1,4 @@
-<p align="center">
-  <a href="https://blog-x-yrfk.vercel.app/" target="_blank">
-    <img src="[https://via.placeholder.com/600x250/1a202c/718096.png?text=BlogX](https://thenounproject.com/icon/blog-6172923/)
-" alt="BlogX Banner" width="600" />
-    <!-- Replace with a real, attractive banner/logo if you have one! 
-         You can use services like Canva to create one. -->
-  </a>
+
 </p>
 
 <h1 align="center">BlogX - Modern Full Stack Blogging Platform</h1>
