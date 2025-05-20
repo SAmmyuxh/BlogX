@@ -26,31 +26,25 @@ const NewBlog = () => {
   const [formError, setFormError] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [actionType, setActionType] = useState(null); // 'draft' or 'publish' for button states
-  const blogIdRef = useRef(null);
   const [autoSaveStatus, setAutoSaveStatus] = useState({ message: '', type: '' }); // type: 'saving', 'success', 'error'
   const autoSaveTimeoutRef = useRef(null);
   const lastSavedContentRef = useRef(JSON.stringify(blog)); // To compare for changes before auto-saving
   const lastSaveTimeRef = useRef(Date.now());
 
   // Function to prepare payload (handles tags)
-  // Frontend: NewBlog.jsx
-const preparePayload = (currentBlogState) => {
-  const tagsArray = typeof currentBlogState.tags === 'string'
-    ? currentBlogState.tags.split(',').map(tag => tag.trim()).filter(Boolean)
-    : [];
+  const preparePayload = (currentBlogState) => {
+    const tagsArray = typeof currentBlogState.tags === 'string'
+      ? currentBlogState.tags.split(',').map(tag => tag.trim()).filter(Boolean)
+      : [];
 
-  const payload = {
-    title: currentBlogState.title,
-    content: currentBlogState.content,
-    tags: tagsArray,
+    const payload = {
+      title: currentBlogState.title,
+      content: currentBlogState.content,
+      tags: tagsArray,
+    };
+
+    return payload;
   };
-
-  if (blogIdRef.current) {
-    payload._id = blogIdRef.current;
-  }
-
-  return payload;
-};
 
   const hasContentChanged = () => {
     // Only consider a change if there's actual content and it's different from last save
@@ -76,14 +70,22 @@ const preparePayload = (currentBlogState) => {
     
     try {
       const payload = preparePayload(blog);
-      const savedDraft = await blogService.saveDraft(payload);
+      let savedDraft;
+
+      // Use the appropriate method based on whether we have an ID
+      if (blog._id) {
+        // Update existing blog
+        savedDraft = await blogService.updateBlog(blog._id, payload);
+        setAutoSaveStatus({ message: 'Draft updated at ' + new Date().toLocaleTimeString(), type: 'success' });
+      } else {
+        // Create new blog
+        savedDraft = await blogService.saveDraft(payload);
+        setAutoSaveStatus({ message: 'Draft created at ' + new Date().toLocaleTimeString(), type: 'success' });
+      }
 
       if (savedDraft && savedDraft._id) {
-        if (!blog._id) { // If it was a new draft creation
-          setBlog(prev => ({ ...prev, _id: savedDraft._id }));
-        }
+        setBlog(prev => ({ ...prev, _id: savedDraft._id }));
         lastSavedContentRef.current = JSON.stringify(preparePayload({...blog, _id: savedDraft._id }));
-        setAutoSaveStatus({ message: 'Draft auto-saved at ' + new Date().toLocaleTimeString(), type: 'success' });
         lastSaveTimeRef.current = now;
       } else {
         // Fallback if ID wasn't returned
@@ -196,13 +198,29 @@ const preparePayload = (currentBlogState) => {
 
     try {
       let responseMessage = '';
+      
       if (submissionStatus === 'draft') {
-        await blogService.saveDraft(payload); // Assumes this creates or updates
-        responseMessage = 'Draft saved successfully!';
+        if (blog._id) {
+          // Update existing draft
+          await blogService.updateBlog(blog._id, payload);
+          responseMessage = 'Draft updated successfully!';
+        } else {
+          // Create new draft
+          await blogService.saveDraft(payload);
+          responseMessage = 'Draft saved successfully!';
+        }
       } else { // 'published'
-        await blogService.publishBlog(payload); // Assumes this creates/updates and publishes
-        responseMessage = 'Blog published successfully!';
+        if (blog._id) {
+          // Update and publish existing blog
+          await blogService.updateBlog(blog._id, { ...payload, status: 'published' });
+          responseMessage = 'Blog updated and published successfully!';
+        } else {
+          // Create and publish new blog
+          await blogService.publishBlog(payload);
+          responseMessage = 'Blog published successfully!';
+        }
       }
+      
       handlesuccess(responseMessage);
 
       // Update the lastSavedContentRef to reflect the changes
@@ -227,7 +245,9 @@ const preparePayload = (currentBlogState) => {
     if (isSubmitting && actionType === buttonType) {
       return buttonType === 'draft' ? 'Saving Draft...' : 'Publishing...';
     }
-    return buttonType === 'draft' ? 'Save as Draft' : 'Publish';
+    return buttonType === 'draft' 
+      ? (blog._id ? 'Update Draft' : 'Save as Draft') 
+      : (blog._id ? 'Update & Publish' : 'Publish');
   };
 
   return (
@@ -237,7 +257,7 @@ const preparePayload = (currentBlogState) => {
           <header className="px-6 py-5 sm:px-8 border-b border-gray-200 flex justify-between items-center">
             <h1 className="text-2xl sm:text-3xl font-semibold text-gray-800 flex items-center">
               <PlusCircleIcon className="h-7 w-7 mr-3 text-indigo-600" />
-              Create New Blog Post
+              {blog._id ? 'Edit Blog Post' : 'Create New Blog Post'}
             </h1>
             <Link
               to="/dashboard"
