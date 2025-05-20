@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://blog-x-yrfk.vercel.app/" target="_blank">
-    <img src="https://via.placeholder.com/600x250/1a202c/718096.png?text=BlogX" alt="BlogX Banner" width="600" />
+    <img src="[https://via.placeholder.com/600x250/1a202c/718096.png?text=BlogX](https://icons8.com/icon/61245/blog)" alt="BlogX Banner" width="600" />
     <!-- Replace with a real, attractive banner/logo if you have one! 
          You can use services like Canva to create one. -->
   </a>
@@ -14,15 +14,6 @@
 
 <p align="center">
   <!-- Badges: Replace placeholders with actual links if available -->
-  <a href="https://github.com/yourusername/BlogX/blob/main/LICENSE">
-    <img src="https://img.shields.io/github/license/yourusername/BlogX?style=for-the-badge&color=blue" alt="License">
-  </a>
-  <a href="https://github.com/yourusername/BlogX/stargazers">
-    <img src="https://img.shields.io/github/stars/yourusername/BlogX?style=for-the-badge&color=yellow" alt="GitHub Stars">
-  </a>
-  <a href="https://github.com/yourusername/BlogX/network/members">
-    <img src="https://img.shields.io/github/forks/yourusername/BlogX?style=for-the-badge&color=green" alt="GitHub Forks">
-  </a>
   <a href="https://blog-x-yrfk.vercel.app/">
     <img src="https://img.shields.io/website?url=https%3A%2F%2Fblog-x-yrfk.vercel.app%2F&label=Live%20Demo&style=for-the-badge&color=brightgreen" alt="Live Demo">
   </a>
